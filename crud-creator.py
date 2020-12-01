@@ -2,16 +2,27 @@ import mysql.connector
 import os
 
 
+hostIn="localhost"
+userIn="root"
+passwordIn="mysql"
+databaseIn="skinexam1_test1_errorlogs"
+
 mydb = mysql.connector.connect(
-  host="localhost",
-  user="root",
-  password="mysql",
-  database="lawncare"
+  host=hostIn,
+  user=userIn,
+  password=passwordIn,
+  database=databaseIn
 )
 
 
 '''
 Creates a quick and dirty api based on tables from a database in the current working directory
+
+TODO:
+    add support for multiple databases
+    add support for whole server database hosted... idk how
+    add support for copying databases to folders.
+    add support for unifying database api folders
 '''
 
 
@@ -199,7 +210,16 @@ def createDelete(command,id,types,table):
     createFile(location,function)
 
 
+def createLogin(hostname,database,user,password):
+    function = """<?php
+    $hn = '""" + hostname + """';
+    $db = '""" + database + """';
+    $un = '""" + user + """';
+    $pw = '""" + password + """';
 
+    """
+    location = os.path.join(parent_dir, 'api\\' ,'login.php') 
+    createFile(location,function)
 
 
 
@@ -212,6 +232,7 @@ tables = []
 parent_dir = os.path.abspath(os.getcwd())
 path = os.path.join(parent_dir,'api\\')
 os.mkdir(path)
+createLogin(hostIn,databaseIn,userIn,passwordIn)
 for x in myresult:
     mycursor.execute("describe " + x[0])
     resultTable = mycursor.fetchall()
